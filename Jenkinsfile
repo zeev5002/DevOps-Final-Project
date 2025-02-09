@@ -43,7 +43,7 @@ pipeline {
                 publishHTML(target: [
                     reportDir: '', 
                     reportFiles: 'output.html', 
-                    reportName: 'Execution Output'
+                    reportName: 'Web Output'
                 ])
                 echo "✅ HTML output published successfully."
             }
