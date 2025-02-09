@@ -6,22 +6,40 @@ pipeline {
         choice(name: 'VAT_ACTION', choices: ['Add VAT', 'Remove VAT'], description: 'Choose VAT action')
     }
     stages {
+        stage('Checkout Repository') {
+            steps {
+                git url: 'https://github.com/zeev5002/DevOps-Final-Project.git', branch: 'master'
+            }
+        }
+        stage('Set Permissions') {
+            steps {
+                sh 'chmod +x ./Script.sh'
+            }
+        }
         stage('Run Script') {
             steps {
-                script {
-                    sh './Script.sh "${ITEM_NAME}" "${ITEM_PRICE}" "${VAT_ACTION}"'
-                }
+                sh './Script.sh "${ITEM_NAME}" "${ITEM_PRICE}" "${VAT_ACTION}"'
             }
         }
         stage('Generate HTML Output') {
             steps {
-                sh '''
-                if [ "${VAT_ACTION}" == "Add VAT" ]; then
-                    echo "<html><body><h1>VAT Calculation</h1><p>Item Name: ${ITEM_NAME}</p><p>Initial Price: ${ITEM_PRICE}</p><p>Action: VAT Added</p><p>Final Price: $(echo "${ITEM_PRICE} * 1.18" | bc)</p></body></html>" > output.html
-                else
-                    echo "<html><body><h1>VAT Calculation</h1><p>Item Name: ${ITEM_NAME}</p><p>Initial Price: ${ITEM_PRICE}</p><p>Action: VAT Removed</p><p>Final Price: $(echo "${ITEM_PRICE} / 1.18" | bc)</p></body></html>" > output.html
-                fi
+                writeFile file: 'output.html', text: '''
+                <html>
+                <head><title>VAT Calculation Result</title></head>
+                <body>
+                    <h1>VAT Calculation Completed</h1>
+                    <p>Item Name: ${ITEM_NAME}</p>
+                    <p>Item Price: ${ITEM_PRICE}</p>
+                    <p>VAT Action: ${VAT_ACTION}</p>
+                </body>
+                </html>
                 '''
+                archiveArtifacts artifacts: 'output.html'
+            }
+        }
+        stage('View HTML Output') {
+            steps {
+                echo 'Output available as HTML artifact. View via Jenkins artifacts or add custom link.'
             }
         }
     }
