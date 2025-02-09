@@ -8,9 +8,9 @@ This project is a **Jenkins Pipeline** that calculates the exact age of a person
 ## 📌 How It Works
 1. **User provides parameters in Jenkins UI**:
    - **NAME** → The person's name.
-   - **TODAY_DATE** → The current date (Format: YYYY-MM-DD).
-   - **BIRTH_DATE** → The birth date (Format: YYYY-MM-DD).
-   
+   - **TODAY_DATE** → The current date (Format: DD-MM-YYYY).
+   - **BIRTH_DATE** → The birth date (Format: DD-MM-YYYY).
+
 2. **Jenkins Pipeline runs `script.bat`**:
    - Validates the input.
    - Calculates the age in **years, months, and days**.
@@ -20,64 +20,29 @@ This project is a **Jenkins Pipeline** that calculates the exact age of a person
 
 ---
 
-## 📌 Pipeline Structure
-The Jenkins pipeline is defined in `Jenkinsfile`, which consists of the following stages:
-
-| **Stage**            | **Description** |
-|----------------------|----------------|
-| **Clone Repository** | Fetches the latest project files from GitHub. |
-| **Run Script**       | Executes `script.bat` to compute the age. |
-| **Publish HTML**     | Generates and publishes `output.html`. |
-
----
-
 ## 📌 Parameters (User Input)
 These parameters are provided when starting a new Jenkins build:
 
 | **Parameter**  | **Type**  | **Default Value** | **Description** |
 |---------------|----------|-----------------|----------------|
 | `NAME`        | String   | `John Doe`       | Person's full name. |
-| `TODAY_DATE`  | String   | `2025-02-09`     | The current date (YYYY-MM-DD). |
-| `BIRTH_DATE`  | String   | `2000-01-01`     | Person's birth date (YYYY-MM-DD). |
+| `TODAY_DATE`  | String   | `09-02-2025`     | The current date (DD-MM-YYYY). |
+| `BIRTH_DATE`  | String   | `01-01-2000`     | Person's birth date (DD-MM-YYYY). |
 
 📌 **Input Validation:**  
 - If the user provides an invalid date format, the pipeline will **not fail** but will **display a warning message**.
 
 ---
 
-## 📌 Jenkinsfile Configuration
-The pipeline is defined in `Jenkinsfile`, which executes the batch script:
+## 📌 Running the Pipeline
+1. Open **Jenkins** (`http://localhost:8080`).
+2. Go to the **DevOps-Pipeline-Final-project**.
+3. Click on **"Build with Parameters"**.
+4. Enter values for `NAME`, `TODAY_DATE`, and `BIRTH_DATE` in **DD-MM-YYYY** format.
+5. Click **"Build"**.
+6. View the HTML report in Jenkins after the pipeline runs successfully.
 
-```groovy
-pipeline {
-    agent any
-    stages {
-        stage('Clone Repository') {
-            steps {
-                git 'https://github.com/zeev5002/DevOps-Jenkins-Project.git'
-            }
-        }
-        stage('Run Script') {
-            steps {
-                bat "script.bat \"%NAME%\" \"%TODAY_DATE%\" \"%BIRTH_DATE%\""
-            }
-        }
-        stage('Publish HTML Output') {
-            steps {
-                publishHTML(target: [
-                    reportDir: '',
-                    reportFiles: 'output.html',
-                    reportName: 'Age Calculation Result'
-                ])
-            }
-        }
-    }
-    post {
-        success {
-            echo "🎉 Pipeline completed successfully!"
-        }
-        failure {
-            echo "❌ Pipeline failed. Check the logs for details."
-        }
-    }
-}
+---
+
+## 📌 Example Output
+**Input Parameters:**

@@ -1,27 +1,27 @@
 @echo off
 setlocal enabledelayedexpansion
 
-:: קבלת פרמטרי
+:: קבלת פרמטרים מ-Jenkins
 set NAME=%1
 set TODAY_DATE=%2
 set BIRTH_DATE=%3
 
-:: בדיקה אם פרמטרים ריקים
-if "%NAME%"=="" set NAME=Unknown
-if "%TODAY_DATE%"=="" set TODAY_DATE=2025-02-09
-if "%BIRTH_DATE%"=="" set BIRTH_DATE=2000-01-01
+:: ולידציה בסיסית לתאריכים
+set FORMAT_CHECK=^[0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9]$
+echo %TODAY_DATE% | findstr /R %FORMAT_CHECK% >nul || echo ⚠️ Warning: TODAY_DATE format is incorrect. Expected DD-MM-YYYY.
+echo %BIRTH_DATE% | findstr /R %FORMAT_CHECK% >nul || echo ⚠️ Warning: BIRTH_DATE format is incorrect. Expected DD-MM-YYYY.
 
-:: פיצול תאריכים
+:: פיצול תאריכים לפורמט DD-MM-YYYY
 for /f "tokens=1-3 delims=-" %%a in ("%TODAY_DATE%") do (
-    set TODAY_YEAR=%%a
+    set TODAY_DAY=%%a
     set TODAY_MONTH=%%b
-    set TODAY_DAY=%%c
+    set TODAY_YEAR=%%c
 )
 
 for /f "tokens=1-3 delims=-" %%a in ("%BIRTH_DATE%") do (
-    set BIRTH_YEAR=%%a
+    set BIRTH_DAY=%%a
     set BIRTH_MONTH=%%b
-    set BIRTH_DAY=%%c
+    set BIRTH_YEAR=%%c
 )
 
 :: חישוב הגיל (שנים, חודשים, ימים)

@@ -8,11 +8,13 @@ pipeline {
         }
         stage('Run Script') {
             steps {
+                echo "🔹 Running script.bat with parameters from Jenkins UI..."
                 bat "script.bat \"%NAME%\" \"%TODAY_DATE%\" \"%BIRTH_DATE%\""
             }
         }
         stage('Publish HTML Output') {
             steps {
+                echo "🔹 Publishing the HTML report..."
                 publishHTML(target: [
                     reportDir: '',
                     reportFiles: 'output.html',
