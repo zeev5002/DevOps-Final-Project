@@ -4,32 +4,36 @@ ITEM_NAME=$1
 ITEM_PRICE=$2
 VAT_ACTION=$3
 
+# Initialize validation errors
+ERRORS=""
+
+# Validate ITEM_NAME
 if [[ -z "$ITEM_NAME" ]]; then
-    echo "Warning: Item name is missing." >> output.html
+    ERRORS+="<p>Warning: Item name is missing.</p>"
     ITEM_NAME="N/A"
 fi
 
-if ! [[ "$ITEM_PRICE" =~ ^[0-9]+(\\.[0-9]+)?$ ]]; then
-    echo "Warning: Invalid item price. Price must be a number." >> output.html
+# Validate ITEM_PRICE
+if ! [[ "$ITEM_PRICE" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
+    ERRORS+="<p>Warning: Invalid item price. Price must be a number.</p>"
     ITEM_PRICE="N/A"
 fi
 
+# Calculate FINAL_PRICE
 if [[ "$ITEM_PRICE" != "N/A" ]]; then
     if [[ "$VAT_ACTION" == "Add VAT" ]]; then
-        FINAL_PRICE=$(echo "$ITEM_PRICE * 1.18" | bc)
+        FINAL_PRICE=$(echo "$ITEM_PRICE * 1.18" | bc -l)
     elif [[ "$VAT_ACTION" == "Remove VAT" ]]; then
-        FINAL_PRICE=$(echo "$ITEM_PRICE / 1.18" | bc)
+        FINAL_PRICE=$(echo "$ITEM_PRICE / 1.18" | bc -l)
     else
+        ERRORS+="<p>Warning: Invalid VAT action selected.</p>"
         FINAL_PRICE="N/A"
     fi
 else
     FINAL_PRICE="N/A"
 fi
 
+# Generate HTML output
 cat <<EOL > output.html
 <h1>VAT Calculation Completed</h1>
-<p>Item Name: $ITEM_NAME</p>
-<p>Item Price: $ITEM_PRICE</p>
-<p>VAT Action: $VAT_ACTION</p>
-<p>Final Price: $FINAL_PRICE</p>
-EOL
+<p>Item Name: $ITEM_NAME
