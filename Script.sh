@@ -18,9 +18,10 @@ fi
 # חישוב מע"מ
 VAT_RATE=0.18
 if [[ "$VAT_ACTION" == "Add VAT" ]]; then
-    FINAL_PRICE=$(echo "$ITEM_PRICE + ($ITEM_PRICE * $VAT_RATE)" | bc)
+    FINAL_PRICE=$(echo "$ITEM_PRICE + ($ITEM_PRICE * $VAT_RATE)" | bc -l)
 elif [[ "$VAT_ACTION" == "Remove VAT" ]]; then
-    FINAL_PRICE=$(echo "$ITEM_PRICE / (1 + $VAT_RATE)" | bc)
+    FINAL_PRICE=$(echo "$ITEM_PRICE / (1 + $VAT_RATE)" | bc -l)
+    FINAL_PRICE=$(printf "%.2f" "$FINAL_PRICE") # לעיגול לשני מקומות עשרוניים
 else
     echo "Error: Invalid VAT action."
     exit 1
