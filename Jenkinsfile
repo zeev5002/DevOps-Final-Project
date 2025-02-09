@@ -2,27 +2,43 @@ pipeline {
     agent any
 
     parameters {
-        string(name: 'ITEM_NAME', defaultValue: 'Default Item', description: 'Item Name')
-        string(name: 'PRICE_BEFORE_TAX', defaultValue: '100', description: 'Price Before Tax')
+        string(name: 'user_input', defaultValue: '0', description: 'Enter a number to check for Fibonacci sequence')
+    }
+
+    environment {
+        OUTPUT_FILE = 'output.html'
     }
 
     stages {
-        stage('Validate and Calculate Price') {
+        stage('Clone Repository') {
             steps {
-                bat '''
-                    script.bat "${ITEM_NAME}" "${PRICE_BEFORE_TAX}"
-                    if %ERRORLEVEL% neq 0 exit 1 // בדיקה אם הסקריפט החזיר שגיאה
-                '''
+                git 'https://github.com/zeev5002/DevOps-Jenkins-Project.git'  
             }
         }
+
+        stage('Run cmd Script') {
+            steps {
+                bat script: "script.cmd %user_input%"
+            }
+        }
+
         stage('Publish HTML Output') {
             steps {
                 publishHTML(target: [
-                    reportDir: '',
-                    reportFiles: 'output.html',
-                    reportName: 'Price Calculation Report'
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: '.',
+                    reportFiles: OUTPUT_FILE,
+                    reportName: 'Fibonacci Check Report'
                 ])
             }
+        }
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: OUTPUT_FILE, fingerprint: true
         }
     }
 }
