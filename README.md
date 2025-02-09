@@ -25,7 +25,7 @@ These parameters are provided when starting a new Jenkins build:
 
 | **Parameter**  | **Type**  | **Default Value** | **Description** |
 |---------------|----------|-----------------|----------------|
-| `NAME`        | String   | `John Doe`       | Person's full name. |
+| `NAME`        | String   | `Zeev Leiderman` | Person's full name. |
 | `TODAY_DATE`  | String   | `09-02-2025`     | The current date (DD-MM-YYYY). |
 | `BIRTH_DATE`  | String   | `01-01-2000`     | Person's birth date (DD-MM-YYYY). |
 
