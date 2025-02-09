@@ -1,17 +1,17 @@
 @echo off
 setlocal enabledelayedexpansion
 
-:: קבלת פרמטרים מ-Jenkins
-set NAME=%1
-set TODAY_DATE=%2
-set BIRTH_DATE=%3
+:: הסרת מרכאות מהפרמטרים שהתקבלו
+set NAME=%~1
+set TODAY_DATE=%~2
+set BIRTH_DATE=%~3
 
-:: הדפסת קלטים כדי לוודא שהתאריכים מתקבלים נכון
+:: הדפסת קלטים לווידוא שהתאריכים מתקבלים נכון
 echo 🔹 Received NAME: %NAME%
 echo 🔹 Received TODAY_DATE: %TODAY_DATE%
 echo 🔹 Received BIRTH_DATE: %BIRTH_DATE%
 
-:: משתנה שמגדיר אם יש שגיאות
+:: משתנה שמכיל הודעות שגיאה אם יש
 set ERROR_MESSAGE=
 
 :: ולידציה של הפורמט (DD-MM-YYYY)
@@ -19,14 +19,14 @@ set FORMAT_CHECK=^[0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9]$
 echo %TODAY_DATE% | findstr /R %FORMAT_CHECK% >nul || set ERROR_MESSAGE=%ERROR_MESSAGE%⚠️ Warning: TODAY_DATE format is incorrect. Expected DD-MM-YYYY.^&
 echo %BIRTH_DATE% | findstr /R %FORMAT_CHECK% >nul || set ERROR_MESSAGE=%ERROR_MESSAGE%⚠️ Warning: BIRTH_DATE format is incorrect. Expected DD-MM-YYYY.^&
 
-:: פיצול תאריכים לפורמט DD-MM-YYYY
-for /f "tokens=1-3 delims=-" %%a in ("%TODAY_DATE%") do (
+:: פיצול תאריכים לפורמט DD-MM-YYYY (ללא מרכאות)
+for /f "tokens=1-3 delims=-" %%a in (%TODAY_DATE%) do (
     set TODAY_DAY=%%a
     set TODAY_MONTH=%%b
     set TODAY_YEAR=%%c
 )
 
-for /f "tokens=1-3 delims=-" %%a in ("%BIRTH_DATE%") do (
+for /f "tokens=1-3 delims=-" %%a in (%BIRTH_DATE%) do (
     set BIRTH_DAY=%%a
     set BIRTH_MONTH=%%b
     set BIRTH_YEAR=%%c
