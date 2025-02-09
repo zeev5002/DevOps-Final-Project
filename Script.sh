@@ -11,7 +11,7 @@ ERRORS=""
 if [[ -z "$ITEM_NAME" ]]; then
     ERRORS+="<p>Warning: Item name is missing.</p>"
     ITEM_NAME="N/A"
-elif ! [[ "$ITEM_NAME" =~ ^[a-zA-Z ]+$ ]]; then
+elif ! [[ "$ITEM_NAME" =~ ^[a-zA-Z\ ]+$ ]]; then
     ERRORS+="<p>Warning: Invalid item name. Name must contain only letters and spaces.</p>"
     ITEM_NAME="N/A"
 fi
