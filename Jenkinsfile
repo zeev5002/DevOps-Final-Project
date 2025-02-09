@@ -20,7 +20,7 @@ pipeline {
         stage('Generate HTML Output') {
             steps {
                 sh 'echo "<h1>VAT Calculation Completed</h1>" > output.html'
-                sh 'echo "<button onclick=\\"window.location.href=\\'output.html\\'\\">לתצוגת ה-HTML</button>" >> output.html'
+                sh 'echo "<button onclick=\\"window.location.href=\'output.html\'\\">לתצוגת ה-HTML</button>" >> output.html'
             }
         }
         stage('Archive Artifacts') {
