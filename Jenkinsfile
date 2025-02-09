@@ -1,41 +1,44 @@
-#!/bin/bash
+pipeline {
+    agent any
 
-# Parameters
-ITEM_NAME=$1       # Name of the item
-ITEM_PRICE=$2      # Price of the item before VAT
-VAT_ACTION=$3      # Add or remove VAT (true/false)
+    parameters {
+        string(name: 'ITEM_NAME', defaultValue: 'Item', description: 'Enter the item name')
+        string(name: 'ITEM_PRICE', defaultValue: '100', description: 'Enter the price before VAT')
+        choice(name: 'VAT_ACTION', choices: ['Add VAT', 'Remove VAT'], description: 'Choose VAT action')
+    }
 
-# Constants
-VAT_RATE=0.18      # VAT rate (18%)
-
-# Validate parameters
-if [[ -z "$ITEM_NAME" || -z "$ITEM_PRICE" || -z "$VAT_ACTION" ]]; then
-    echo "Error: Missing required parameters."
-    echo "Usage: ./Script.sh <ITEM_NAME> <ITEM_PRICE> <VAT_ACTION>"
-    exit 1
-fi
-
-if ! [[ "$ITEM_PRICE" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
-    echo "Error: ITEM_PRICE must be a numeric value."
-    exit 1
-fi
-
-if [[ "$VAT_ACTION" != "true" && "$VAT_ACTION" != "false" ]]; then
-    echo "Error: VAT_ACTION must be 'true' (Add VAT) or 'false' (Remove VAT)."
-    exit 1
-fi
-
-# Calculate final price
-if [ "$VAT_ACTION" == "true" ]; then
-    FINAL_PRICE=$(echo "$ITEM_PRICE + ($ITEM_PRICE * $VAT_RATE)" | bc)
-    ACTION="Added VAT"
-else
-    FINAL_PRICE=$(echo "$ITEM_PRICE / (1 + $VAT_RATE)" | bc)
-    ACTION="Removed VAT"
-fi
-
-# Output result
-echo "Item Name: $ITEM_NAME"
-echo "Original Price: $ITEM_PRICE"
-echo "Action: $ACTION"
-echo "Final Price: $FINAL_PRICE"
+    stages {
+        stage('Checkout Repository') {
+            steps {
+                // Clone the repository
+                git 'https://github.com/zeev5002/DevOps-Final-Project.git'
+            }
+        }
+        stage('Run VAT Calculator') {
+            steps {
+                script {
+                    // Determine VAT action
+                    def vatAction = params.VAT_ACTION == 'Add VAT' ? 'true' : 'false'
+                    // Run the script with parameters
+                    sh "./Script.sh ${params.ITEM_NAME} ${params.ITEM_PRICE} ${vatAction}"
+                }
+            }
+        }
+        stage('Generate HTML Output') {
+            steps {
+                script {
+                    // Run the script and capture output
+                    def output = sh(script: "./Script.sh ${params.ITEM_NAME} ${params.ITEM_PRICE} ${params.VAT_ACTION == 'Add VAT' ? 'true' : 'false'}", returnStdout: true).trim()
+                    // Write the output to an HTML file
+                    writeFile file: 'output.html', text: "<pre>${output}</pre>"
+                }
+            }
+        }
+        stage('Archive Artifacts') {
+            steps {
+                // Archive the HTML file as an artifact
+                archiveArtifacts artifacts: 'output.html', fingerprint: true
+            }
+        }
+    }
+}
