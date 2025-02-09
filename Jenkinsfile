@@ -1,12 +1,9 @@
 pipeline {
     agent any
-    parameters {
-        string(name: 'NUMERIC_PARAM', defaultValue: '10', description: 'Enter a numeric parameter')
-    }
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/YourUsername/DevOps-Jenkins-Project.git'
+                git credentialsId: 'GitHub-Credentials', url: 'https://github.com/zeev5002/DevOps-Jenkins-Project.git'
             }
         }
         stage('Run Script') {
