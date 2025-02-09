@@ -3,23 +3,25 @@ pipeline {
     parameters {
         string(name: 'ITEM_NAME', defaultValue: 'computer', description: 'Enter item name')
         string(name: 'ITEM_PRICE', defaultValue: '100', description: 'Enter item price')
-        booleanParam(name: 'ADD_VAT', defaultValue: true, description: 'Add VAT?')
+        choice(name: 'VAT_ACTION', choices: ['Add VAT', 'Remove VAT'], description: 'Choose VAT action')
     }
     stages {
         stage('Run Script') {
             steps {
                 script {
-                    sh """
-                    ./Script.sh ${params.ITEM_NAME} ${params.ITEM_PRICE} ${params.ADD_VAT}
-                    """
+                    sh './Script.sh "${ITEM_NAME}" "${ITEM_PRICE}" "${VAT_ACTION}"'
                 }
             }
         }
         stage('Generate HTML Output') {
             steps {
-                sh """
-                echo "<html><body><h1>Output</h1><p>Item Name: ${params.ITEM_NAME}</p><p>Price: ${params.ITEM_PRICE}</p><p>VAT Added: ${params.ADD_VAT}</p></body></html>" > output.html
-                """
+                sh '''
+                if [ "${VAT_ACTION}" == "Add VAT" ]; then
+                    echo "<html><body><h1>VAT Calculation</h1><p>Item Name: ${ITEM_NAME}</p><p>Initial Price: ${ITEM_PRICE}</p><p>Action: VAT Added</p><p>Final Price: $(echo "${ITEM_PRICE} * 1.18" | bc)</p></body></html>" > output.html
+                else
+                    echo "<html><body><h1>VAT Calculation</h1><p>Item Name: ${ITEM_NAME}</p><p>Initial Price: ${ITEM_PRICE}</p><p>Action: VAT Removed</p><p>Final Price: $(echo "${ITEM_PRICE} / 1.18" | bc)</p></body></html>" > output.html
+                fi
+                '''
             }
         }
     }

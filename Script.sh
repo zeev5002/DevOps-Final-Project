@@ -2,43 +2,26 @@
 
 ITEM_NAME=$1
 ITEM_PRICE=$2
-ADD_VAT=$3
+VAT_ACTION=$3
 
-# Validate parameters
+# Validation
 if ! [[ "$ITEM_PRICE" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
-  echo "Error: ITEM_PRICE must be a number."
-  exit 1
+    echo "Error: ITEM_PRICE must be a valid number." >&2
+    exit 1
 fi
 
-if [[ -z "$ITEM_NAME" ]]; then
-  echo "Error: ITEM_NAME cannot be empty."
-  exit 1
-fi
-
-VAT_RATE=0.18
-if [ "$ADD_VAT" == "true" ]; then
-    FINAL_PRICE=$(echo "$ITEM_PRICE + ($ITEM_PRICE * $VAT_RATE)" | bc)
-    ACTION="Added VAT"
+if [[ "$VAT_ACTION" == "Add VAT" ]]; then
+    FINAL_PRICE=$(echo "$ITEM_PRICE * 1.18" | bc)
+    ACTION="VAT Added"
+elif [[ "$VAT_ACTION" == "Remove VAT" ]]; then
+    FINAL_PRICE=$(echo "$ITEM_PRICE / 1.18" | bc)
+    ACTION="VAT Removed"
 else
-    FINAL_PRICE=$(echo "$ITEM_PRICE / (1 + $VAT_RATE)" | bc)
-    ACTION="Removed VAT"
+    echo "Error: Invalid VAT_ACTION. Use 'Add VAT' or 'Remove VAT'." >&2
+    exit 1
 fi
 
 echo "Item Name: $ITEM_NAME"
 echo "Initial Price: $ITEM_PRICE"
 echo "Action: $ACTION"
 echo "Final Price: $FINAL_PRICE"
-
-# Generate HTML output
-cat <<EOF > output.html
-<html>
-<head><title>VAT Calculation</title></head>
-<body>
-<h1>VAT Calculation Result</h1>
-<p>Item Name: $ITEM_NAME</p>
-<p>Initial Price: $ITEM_PRICE</p>
-<p>Action: $ACTION</p>
-<p>Final Price: $FINAL_PRICE</p>
-</body>
-</html>
-EOF
