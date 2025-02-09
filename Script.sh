@@ -33,7 +33,17 @@ else
     FINAL_PRICE="N/A"
 fi
 
+# Format FINAL_PRICE to 2 decimal places if it's a number
+if [[ "$FINAL_PRICE" != "N/A" ]]; then
+    FINAL_PRICE=$(printf "%.2f" "$FINAL_PRICE")
+fi
+
 # Generate HTML output
 cat <<EOL > output.html
 <h1>VAT Calculation Completed</h1>
-<p>Item Name: $ITEM_NAME
+<p>Item Name: $ITEM_NAME</p>
+<p>Item Price: $ITEM_PRICE</p>
+<p>VAT Action: $VAT_ACTION</p>
+<p>Final Price: $FINAL_PRICE</p>
+$ERRORS
+EOL
