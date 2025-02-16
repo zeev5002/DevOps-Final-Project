@@ -1,20 +1,33 @@
-# Price Calculation Pipeline
+# DevOps Final Project - VAT Calculation
 
-This Jenkins pipeline calculates the final price of an item including VAT (18%).  
-It validates the user input to ensure correctness.
+## 📌 Project Overview
+This project is a **Jenkins Pipeline** that automates the execution of a **Bash script** for VAT (Value Added Tax) calculations.  
+The script receives parameters from Jenkins, validates them, performs VAT calculations, and generates an **HTML output report**.
 
-## Features:
-✅ Accepts **item name** and **price before VAT** as user-defined parameters (via Jenkins UI).  
-✅ **Validates input**:  
-   - Item name must contain **only letters and spaces**.  
-   - Price must be a **numeric value** (no letters or special characters).  
-✅ **Automatically calculates VAT (18%) and total price**.  
-✅ **Generates an HTML report** with the results.  
+---
 
-## Usage:
-1. Go to **Jenkins > Build with Parameters**.
-2. Enter **Item Name** (letters only, no numbers/special characters).
-3. Enter **Price Before VAT** (numeric only).
-4. Run the pipeline.
-5. View the **Price Calculation Report** in Jenkins.
-6. jkk
+## ⚙️ How It Works
+1. **User inputs parameters** (Item Name, Item Price, VAT Action) in Jenkins.
+2. **Jenkins triggers the pipeline** which runs the Bash script.
+3. **The script validates the inputs**:
+   - Ensures the item name contains only letters.
+   - Ensures the price is a valid number.
+   - Displays warnings for invalid inputs (without breaking execution).
+4. **VAT Calculation**:
+   - If "Add VAT" is selected → Adds **18% VAT** to the price.
+   - If "Remove VAT" is selected → Removes **18% VAT** from the price.
+5. **Generates an HTML report** displaying:
+   - The original and final price.
+   - Any validation warnings (if applicable).
+6. **Jenkins archives the output and publishes it** as an HTML page.
+
+## 🔗 Links & Resources
+- 📜 **Repository**: [GitHub Repo](https://github.com/zeev5002/DevOps-Final-Project)
+- 🛠️ **Script File**: [`Script.sh`](https://github.com/zeev5002/DevOps-Final-Project/blob/master/Script.sh)
+- 📄 **Jenkinsfile**: [`Jenkinsfile`](https://github.com/zeev5002/DevOps-Final-Project/blob/master/Jenkinsfile)
+
+## ✅ Features & Validations
+✔ **Handles invalid inputs gracefully (warnings in HTML output).**  
+✔ **Supports both VAT addition & removal.**  
+✔ **Fully automated via Jenkins.**  
+✔ **Archives & publishes HTML report for easy viewing.**  
