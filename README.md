@@ -17,3 +17,4 @@ It validates the user input to ensure correctness.
 3. Enter **Price Before VAT** (numeric only).
 4. Run the pipeline.
 5. View the **Price Calculation Report** in Jenkins.
+6. jkk
